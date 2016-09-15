@@ -20,7 +20,7 @@ defmodule SpellCheck do
 
   def candidates(word) do
     cond do
-      (words = known(MapSet.put(@empty_set, word)) != @empty_set -> words
+      (words = known(MapSet.put(@empty_set, word))) != @empty_set -> words
       (words = (word |> edits1 |> known)) != @empty_set -> words
       (words = (word |> edits2 |> known)) != @empty_set -> words
       true -> [word]
@@ -39,7 +39,6 @@ defmodule SpellCheck do
     inserts = for {left, right} <- splits, char <- @chars, do: left <> (char |> to_string) <> right
 
     mapset = MapSet.new(deletes)
-
     mapset = MapSet.union(mapset, MapSet.new(transposes))
     mapset = MapSet.union(mapset, MapSet.new(replaces))
     mapset = MapSet.union(mapset, MapSet.new(inserts))
