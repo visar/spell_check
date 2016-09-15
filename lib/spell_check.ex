@@ -1,6 +1,7 @@
 defmodule SpellCheck do
+  import :erlang, only: [iolist_to_binary: 1]
 
-  @chars ?a..?z |> Enum.to_list |> Enum.map(&([ &1 ]))
+  @chars ?a..?z |> Enum.to_list
   @empty_set MapSet.new()
 
   @word_frequency WordFrequency.words
@@ -32,22 +33,45 @@ defmodule SpellCheck do
   end
 
   def edits1(word) do
-    splits = for i <- 0..String.length(word), do: String.split_at(word, i)
-    deletes = for {left, right} <- splits, right != "", do: left <> String.slice(right, 1, :infinity)
-    transposes = for {left, right} <- splits, String.length(right) > 1, do: left <> String.at(right, 1) <> String.at(right, 0) <> String.slice(right, 2, :infinity)
-    replaces = for {left, right} <- splits, char <- @chars, right != "", do: left <> (char |> to_string) <> String.slice(right, 1, :infinity)
-    inserts = for {left, right} <- splits, char <- @chars, do: left <> (char |> to_string) <> right
+    splits = for i <- 0..String.length(word) do
+      {left, right} = String.split_at(word, i)
+      {String.to_charlist(left), String.to_charlist(right)}
+    end
 
-    mapset = MapSet.new(deletes)
-    mapset = MapSet.union(mapset, MapSet.new(transposes))
-    mapset = MapSet.union(mapset, MapSet.new(replaces))
-    mapset = MapSet.union(mapset, MapSet.new(inserts))
+    []
+    |> deletes(splits)
+    |> transposes(splits)
+    |> replaces(splits)
+    |> inserts(splits)
+    |> MapSet.new()
+  end
 
-    mapset
+  defp deletes(set, splits) do
+    for {left, [_|right]} <- splits, into: set do
+      iolist_to_binary([left, right])
+    end
+  end
+
+  defp transposes(set, splits) do
+    for {left, [a,b|right]} <- splits, into: set do
+      iolist_to_binary([left, b, a, right])
+    end
+  end
+
+  defp replaces(set, splits) do
+    for {left, [_|right]} <- splits, char <- @chars, into: set do
+      iolist_to_binary([left, char, right])
+    end
+  end
+
+  defp inserts(set, splits) do
+    for {left, right} <- splits, char <- @chars, into: set do
+      iolist_to_binary([left, char, right])
+    end
   end
 
   def edits2(word) do
-    for e1 <- edits1(word), e2 <- edits1(e1), into: MapSet.new, do: e2
+    (for e1 <- edits1(word), e2 <- edits1(e1), do: e2) |> MapSet.new
   end
 
 end
