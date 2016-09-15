@@ -20,7 +20,7 @@ defmodule SpellCheck do
 
   def candidates(word) do
     cond do
-      (words = known(MapSet.put(@empty_set, word)) != @empty_set -> words
+      (words = known(MapSet.put(@empty_set, word))) != @empty_set -> words
       (words = (word |> edits1 |> known)) != @empty_set -> words
       (words = (word |> edits2 |> known)) != @empty_set -> words
       true -> [word]
