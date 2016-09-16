@@ -49,30 +49,30 @@ defmodule SpellCheckTest do
 
   # @tag :pending
   test "size of training set" do
-    assert SpellCheck.words |> Map.keys |> length == 29152
+    assert SpellCheck.words |> Map.keys |> length == 75136
   end
 
   # @tag :pending
   test "total number of occurrences of the words from the training set" do
-    assert SpellCheck.words |> Map.values |> Enum.sum == 1105221
+    assert SpellCheck.words |> Map.values |> Enum.sum == 1095686
   end
 
   # @tag :pending
   test "most common words" do
-    assert SpellCheck.words |> Enum.sort_by(fn{_,v} -> v end, &>=/2) |> Enum.take(10) == [{"the", 80030},
-                                                                                          {"of", 40025},
-                                                                                          {"and", 38312},
-                                                                                          {"to", 28766},
-                                                                                          {"in", 22047},
-                                                                                          {"a", 21155},
-                                                                                          {"that", 12512},
-                                                                                          {"he", 12401},
-                                                                                          {"was", 11410},
-                                                                                          {"it", 10681}]
+    assert SpellCheck.words |> Enum.sort_by(fn{_,v} -> v end, &>=/2) |> Enum.take(10) == [{"the", 78172},
+                                                                                          {"of", 39450},
+                                                                                          {"and", 37008},
+                                                                                          {"to", 28295},
+                                                                                          {"in", 21390},
+                                                                                          {"a", 20610},
+                                                                                          {"that", 11483},
+                                                                                          {"he", 11481},
+                                                                                          {"was", 11159},
+                                                                                          {"his", 9961}]
   end
 
   # @tag :pending
   test "count of \"the\"" do
-    assert SpellCheck.words["the"] == 80030
+    assert SpellCheck.words["the"] == 78172
   end
 end
