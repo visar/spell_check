@@ -18,14 +18,9 @@ defmodule SpellCheck do
     @word_frequency
   end
 
-  def probability(word, N \\ @total) do
-    Map.get(@word_frequency, word) / N
-  end
-
   def correction(word) do
     candidates(word)
     |> Enum.max
-    # |> Enum.max_by(&probability/2)
   end
 
   def candidates(word) do
