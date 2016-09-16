@@ -1,11 +1,15 @@
 defmodule SpellCheck do
-
+  @default_filename Path.absname("lib/big.txt")
   @chars ?a..?z |> Enum.to_list |> Enum.map(&([ &1 ]))
   @empty_set MapSet.new()
-
-  @word_frequency WordFrequency.words
+  @word_frequency Regex.split(~r/[^a-z]/,
+                              @default_filename
+                              |> File.read!
+                              |> String.downcase)
+                              |> Enum.filter(fn(x) -> x != "" end)
+                  |> Enum.reduce(Map.new,
+                                 fn(item, acc) -> Map.update(acc, item, 1, &(&1 + 1)) end)
   @word_keys @word_frequency |> Map.keys |> MapSet.new
-
   @total @word_frequency |> Map.values |> Enum.sum
 
   def probability(word, N \\ @total) do
@@ -49,5 +53,4 @@ defmodule SpellCheck do
   def edits2(word) do
     for e1 <- edits1(word), e2 <- edits1(e1), into: MapSet.new, do: e2
   end
-
 end
