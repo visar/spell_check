@@ -12,6 +12,10 @@ defmodule SpellCheck do
   @word_keys @word_frequency |> Map.keys |> MapSet.new
   @total @word_frequency |> Map.values |> Enum.sum
 
+  def words do
+    @word_frequency
+  end
+
   def probability(word, N \\ @total) do
     Map.get(@word_frequency, word) / N
   end
